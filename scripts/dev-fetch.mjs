@@ -4,10 +4,7 @@
  * Writes data/last-good.json unless SUPABASE_URL + SUPABASE_SERVICE_KEY are set.
  */
 import { readFileSync, existsSync } from 'node:fs';
-import * as fred from '../src/sources/fred.mjs';
-import anchorConfig from '../config/anchors.json' with { type: 'json' };
-import { runRefresh } from '../src/lib/pipeline.mjs';
-import { supabasePersist, filePersist } from '../src/lib/persist.mjs';
+import { persistForEnv, runRefreshJob } from '../src/lib/run-refresh-job.mjs';
 
 function loadEnv() {
   const p = new URL('../.env', import.meta.url);
@@ -21,15 +18,6 @@ function loadEnv() {
 
 loadEnv();
 
-const persist = (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY)
-  ? supabasePersist({ url: process.env.SUPABASE_URL, key: process.env.SUPABASE_SERVICE_KEY })
-  : filePersist(new URL('../data/last-good.json', import.meta.url).pathname);
-
-const body = await runRefresh({
-  sources: [fred],
-  anchors: anchorConfig.anchors,
-  persist,
-});
-
+const body = await runRefreshJob({ persist: persistForEnv({ allowFile: true }) });
 console.log(JSON.stringify(body, null, 2));
 if (body.results.some(r => r.status !== 'ok')) process.exitCode = 1;

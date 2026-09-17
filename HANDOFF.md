@@ -67,7 +67,7 @@ Benched: `control.incidents`, `control.horizon`, `delivery.science`.
 
 **3. Find receipts for `control.horizon` (METR) and decide whether `control.incidents` can ever have a denominator.** `delivery.science` is still the weakest thing on the board — treat as v2 or cut.
 
-**4. Deploy.** Netlify build is `npm run build` (gate then tests). Scheduled function is `0 6 * * *`.
+**4. Netlify env vars**, set in the UI (not in the repo): `FRED_API_KEY`, `EIA_API_KEY`, and later `SUPABASE_URL` + `SUPABASE_SERVICE_KEY`. Build is `npm run build` then copies `web/balance.html` → `web/index.html`. Daily cron is `0 6 * * *`. Hit `/api/refresh` to run the job by hand. `/api/fred/*` and `/api/eia/*` are functions that inject the keys — do not put keys in redirects.
 
 ---
 

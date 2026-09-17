@@ -1,18 +1,18 @@
 [build]
-  command = "npm run build"     # gate then tests — an unsourced claim fails the deploy
+  command = "npm run build"
   publish = "web"
+
+[build.environment]
+  NODE_VERSION = "22"
 
 [functions]
   directory = "netlify/functions"
+  included_files = ["config/anchors.json"]
 
-[[redirects]]
-  from = "/api/fred/*"
-  to = "https://api.stlouisfed.org/fred/:splat?api_key=FRED_API_KEY"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/eia/*"
-  to = "https://api.eia.gov/:splat?api_key=EIA_API_KEY"
-  status = 200
-  force = true
+# The page is a static file. Don't let a CDN sit on a stale specimen for a week.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "public, max-age=0, must-revalidate"
