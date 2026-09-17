@@ -9,7 +9,7 @@
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "gate": "node scripts/check-claims.mjs",
-    "build": "npm run gate && npm test && cp web/balance.html web/index.html",
+    "build": "npm run gate && npm test",
     "fetch": "node scripts/dev-fetch.mjs"
   }
 }

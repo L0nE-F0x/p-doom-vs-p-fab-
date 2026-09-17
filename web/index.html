@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>p(doom) vs p(fab) — who is winning the argument so far</title>
+<meta name="description" content="A scoreboard for the already-placed bet between AI doomers and accelerationists. Not a prediction. Not a probability.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #10B981;
+    --bg: #030705;
+    --surface: #18181B;
+    --surface-2: #101113;
+    --text: #FFFFFF;
+    --muted: #A1A1AA;
+    --faint: #71717A;
+    --border: #27272A;
+    --fab: #10B981;
+    --doom: #60A5FA;
+    --warn: #F59E0B;
+    --radius-card: 15px;
+    --radius-control: 8px;
+    --radius-pill: 9999px;
+    --gap: 16px;
+    --shadow: 0 18px 50px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); }
+  body {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  a { color: var(--fab); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  #fx { position: fixed; inset: 0; z-index: 0; pointer-events: none; width: 100%; height: 100%; }
+  .scan {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 3px, rgba(0,0,0,.16) 3px 4px),
+      radial-gradient(1000px 480px at 50% -8%, rgba(16,185,129,.11), transparent 55%);
+    mix-blend-mode: screen; opacity: .5;
+  }
+  .wrap { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
+
+  .label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px; font-weight: 600; line-height: 1.2;
+    letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+  }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .led {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .led:hover { text-decoration: none; border-color: var(--fab); color: var(--text); }
+  .led i {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--fab);
+    box-shadow: 0 0 8px var(--fab);
+  }
+  .led.on { color: var(--text); border-color: var(--fab); }
+  .bar-spacer { flex: 1; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--primary); color: #04110b;
+    border-radius: var(--radius-pill); padding: 8px 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    box-shadow: 0 0 22px rgba(16,185,129,.3);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .cta:hover { text-decoration: none; transform: translateY(-1px); box-shadow: 0 0 28px rgba(16,185,129,.45); }
+  .cta-ghost {
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); box-shadow: none;
+  }
+  .cta-ghost:hover { color: var(--text); border-color: var(--fab); }
+
+  .hero { padding: 64px 0 48px; }
+  h1 {
+    font-weight: 500; font-size: clamp(40px, 7vw, 64px);
+    line-height: 1.04; letter-spacing: -.02em; margin: 10px 0 16px;
+  }
+  h1 .vs { color: var(--faint); font-size: .55em; padding: 0 .16em; vertical-align: .12em; }
+  h1 .d { color: var(--doom); }
+  h1 .f { color: var(--fab); }
+  .lede { font-size: 20px; color: var(--muted); max-width: 38ch; margin: 0 0 28px; }
+  .lede strong { color: var(--text); font-weight: 500; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .split {
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap);
+    margin: 8px 0 56px;
+  }
+  .card {
+    --glow: var(--fab);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 24px;
+    box-shadow: var(--shadow);
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .card.doom { --glow: var(--doom); }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--glow) 45%, var(--border));
+    box-shadow: 0 16px 40px rgba(0,0,0,.45), 0 0 24px color-mix(in srgb, var(--glow) 18%, transparent);
+  }
+  .card h2 { margin: 8px 0 10px; font-size: 22px; font-weight: 500; }
+  .card p { margin: 0; color: var(--muted); }
+  .card.is { border-color: color-mix(in srgb, var(--fab) 35%, var(--border)); }
+  .card.not { border-color: color-mix(in srgb, var(--doom) 35%, var(--border)); }
+
+  section { padding: 56px 0 8px; }
+  section h2 { font-size: 13px; font-weight: 500; margin: 0 0 18px; }
+  .rule {
+    font-size: clamp(22px, 3.2vw, 32px);
+    font-weight: 500; line-height: 1.25; margin: 0 0 16px;
+    max-width: 22ch;
+  }
+  .copy { color: var(--muted); max-width: 62ch; margin: 0 0 12px; }
+  .copy strong { color: var(--text); font-weight: 500; }
+
+  .steps {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap);
+    margin-top: 8px;
+  }
+  .step { padding: 22px; }
+  .step .n {
+    font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--fab);
+    letter-spacing: .14em;
+  }
+  .step h3 { margin: 10px 0 8px; font-size: 18px; font-weight: 500; }
+  .step p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+  .read {
+    display: grid; grid-template-columns: 1.1fr .9fr; gap: var(--gap); align-items: stretch;
+  }
+  .gauge-card { display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+  .mini {
+    width: 100%; height: auto; display: block;
+  }
+  .legend { display: flex; gap: 18px; margin-top: 8px; font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  .legend .d { color: var(--doom); }
+  .legend .f { color: var(--fab); }
+  .notes { display: grid; gap: 12px; }
+  .note {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 16px 18px;
+    transition: border-color .2s, transform .2s;
+  }
+  .note:hover { border-color: color-mix(in srgb, var(--fab) 30%, var(--border)); transform: translateY(-2px); }
+  .note h3 { margin: 0 0 6px; font-size: 15px; font-weight: 500; }
+  .note p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  .table {
+    width: 100%; border-collapse: collapse; font-size: 14.5px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-card); overflow: hidden;
+  }
+  .table th, .table td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .table th {
+    font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--surface-2);
+  }
+  .table tr:last-child td { border-bottom: 0; }
+  .table td:first-child { font-family: "JetBrains Mono", monospace; font-size: 13px; }
+  .ok { color: var(--fab); }
+  .no { color: var(--faint); }
+
+  .end {
+    margin-top: 64px; padding: 32px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-card); text-align: left;
+  }
+  .end h2 { font-size: 28px; font-weight: 500; margin: 0 0 10px; letter-spacing: -.02em; }
+  .end p { margin: 0 0 20px; color: var(--muted); max-width: 48ch; }
+
+  footer { margin-top: 48px; font-size: 13px; color: var(--faint); max-width: 72ch; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 800px) {
+    .split, .steps, .read { grid-template-columns: 1fr; }
+    .hero { padding-top: 40px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .scan { display: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="scan" aria-hidden="true"></div>
+
+<div class="wrap">
+  <nav class="bar">
+    <a class="led on" href="index.html"><i></i> How it works</a>
+    <a class="led" href="balance.html">Board</a>
+    <span class="bar-spacer"></span>
+    <a class="cta" href="balance.html">Open the board</a>
+  </nav>
+
+  <header class="hero">
+    <div class="label">A scoreboard, not a prophecy</div>
+    <h1><span class="d">p(doom)</span><span class="vs">vs</span><span class="f">p(fab)</span></h1>
+    <p class="lede">
+      <strong>Who is winning the argument so far.</strong>
+      A public record of a bet that’s already been placed — scored on live data, with receipts.
+    </p>
+    <div class="actions">
+      <a class="cta" href="balance.html">Open the board</a>
+      <a class="cta cta-ghost" href="#read">How to read it</a>
+    </div>
+  </header>
+
+  <div class="split">
+    <article class="card is">
+      <div class="label">This is</div>
+      <h2>A scoreboard for a disagreement.</h2>
+      <p>
+        Doomers and accelerationists already made opposite claims about jobs, energy, growth, and control.
+        This page keeps score against those claims, from t0 = 22 March 2023.
+      </p>
+    </article>
+    <article class="card not doom">
+      <div class="label">This is not</div>
+      <h2>A probability of the end of the world.</h2>
+      <p>
+        We borrowed the notation for the title. We do not get to borrow its authority.
+        The needle is never shown as a percentage, and it makes no claim about how this ends.
+      </p>
+    </article>
+  </div>
+
+  <section>
+    <div class="label">Rule one</div>
+    <p class="rule">An indicator only ships if the two camps would have bet opposite ways on it.</p>
+    <p class="copy">
+      Frontier benchmark scores don’t qualify — both sides predicted those would climb.
+      Datacenter buildout doesn’t qualify — both predicted that too.
+      What qualifies is where they actually disagreed: jobs, electricity bills, whether the boom shows up in productivity, whether anyone stays in control.
+    </p>
+  </section>
+
+  <section id="read">
+    <div class="label">How to read the board</div>
+    <div class="read" style="margin-top:16px">
+      <div class="card gauge-card">
+        <div class="label">The gauge</div>
+        <svg class="mini" viewBox="28 48 344 172" aria-hidden="true">
+          <defs>
+            <linearGradient id="arc" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#60A5FA"/>
+              <stop offset="100%" stop-color="#10B981"/>
+            </linearGradient>
+          </defs>
+          <circle cx="200" cy="200" r="148" fill="none" stroke="#1f1f23" stroke-width="22"/>
+          <path d="M52 200 A148 148 0 1 1 348 200" fill="none" stroke="url(#arc)" stroke-width="8" stroke-linecap="round"/>
+          <line x1="200" y1="200" x2="248" y2="68" stroke="#fff" stroke-width="2"/>
+          <circle cx="200" cy="200" r="8" fill="#030705" stroke="#10B981" stroke-width="2"/>
+          <text x="68" y="196" fill="#60A5FA" font-family="JetBrains Mono, monospace" font-size="11">DOOM</text>
+          <text x="332" y="196" text-anchor="end" fill="#10B981" font-family="JetBrains Mono, monospace" font-size="11">FAB</text>
+        </svg>
+        <div class="legend"><span class="d">43 p(doom)</span><span class="f">57 p(fab)</span></div>
+        <p class="copy" style="margin:12px 0 0">Two integers. They add to 100. There is no % sign, on purpose. Left is doom, right is fab. The needle is who is ahead <em>on the record so far</em>.</p>
+      </div>
+      <div class="notes">
+        <div class="note">
+          <h3>p(fab)</h3>
+          <p>The probability that it goes fabulously right. Named for the fabs, because that is what the other side is building.</p>
+        </div>
+        <div class="note">
+          <h3>Fizzle is a third camp</h3>
+          <p>A productivity miss refutes p(fab). It does not confirm p(doom). That track is scored separately and never mixed into the gauge.</p>
+        </div>
+        <div class="note">
+          <h3>Stale drops out</h3>
+          <p>If a source goes quiet, its confidence decays and it leaves the tilt. We do not freeze a dead reading in place.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">Rule two</div>
+    <p class="rule">No quote, no render.</p>
+    <p class="copy">
+      Every indicator needs a named person, a date, a URL, and a <strong>verbatim quote</strong> on both poles.
+      An empty slot does not render — the build fails. Paraphrase is how a headline gets laundered into a claim.
+      If we can’t open the source, it stays unverified.
+    </p>
+    <div class="steps">
+      <article class="card step">
+        <div class="n">1</div>
+        <h3>Change since t0</h3>
+        <p>Unemployment at 4.4 scores nothing by itself. Unemployment versus March 2023 is the bet. t0 is 22 March 2023, the pause letter.</p>
+      </article>
+      <article class="card step">
+        <div class="n">2</div>
+        <h3>Categories, not piles</h3>
+        <p>Three jobs series cannot outvote one energy series. We average inside a category first, then across categories.</p>
+      </article>
+      <article class="card step">
+        <div class="n">3</div>
+        <h3>Anchors are frozen</h3>
+        <p>Where a claim has a number, that number is the pole. Changing an anchor later takes a pull request, and history keeps the old version.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">What qualifies</div>
+    <p class="copy">Both camps have to have made opposite bets. Shared predictions are rejected, even if they would make a prettier needle.</p>
+    <table class="table">
+      <thead>
+        <tr><th>Candidate</th><th>On the board?</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>jobs.unemp</td><td class="ok">Yes</td><td>Amodei 10–20% unemployment vs Andreessen “never will”</td></tr>
+        <tr><td>jobs.junior</td><td class="ok">Yes</td><td>Half of entry-level white-collar jobs vs no net destruction</td></tr>
+        <tr><td>energy.retail</td><td class="ok">Yes</td><td>Wright: demand lowers prices vs Goldman: bills stay ~6% up</td></tr>
+        <tr><td>growth.prod</td><td class="ok">Fizzle track</td><td>Goldman +1.5pp vs Acemoglu ~0.064pp — never added into doom</td></tr>
+        <tr><td>Frontier benchmarks</td><td class="no">Rejected</td><td>Both camps predicted they would climb</td></tr>
+        <tr><td>Token cost</td><td class="no">Rejected</td><td>Both camps predicted cheap tokens</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="end">
+    <div class="label">Specimen feed</div>
+    <h2>The board is live as a prototype.</h2>
+    <p>
+      Readings on it today are illustrative — no FRED key is wired yet.
+      The quotes are real and opened at source. Open the board, re-run the argument with the presets, then come back here if the needle still looks like a probability.
+    </p>
+    <a class="cta" href="balance.html">Open the board</a>
+  </div>
+
+  <footer>
+    Method and frozen anchors live in the repo —
+    <a href="https://github.com/L0nE-F0x/p-doom-vs-p-fab-">github.com/L0nE-F0x/p-doom-vs-p-fab-</a>.
+    Nothing here ticks: most of this data is monthly, some of it quarterly.
+  </footer>
+</div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var canvas = document.getElementById("fx");
+  var ctx = canvas.getContext("2d");
+  var dots = [];
+  function resize() {
+    canvas.width = innerWidth; canvas.height = innerHeight; dots = [];
+    var n = Math.floor((canvas.width * canvas.height) / 32000);
+    for (var i = 0; i < n; i++) {
+      dots.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*1.3+.3, v: Math.random()*.22+.04, a: Math.random()*.3+.06 });
+    }
+  }
+  resize(); addEventListener("resize", resize);
+  var t0 = performance.now();
+  function frame(now) {
+    if (document.hidden) { requestAnimationFrame(frame); return; }
+    var t = (now - t0) / 1000;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "rgba(16,185,129,0.04)"; ctx.lineWidth = 1;
+    var step = 48, ox = (t * 8) % step;
+    for (var x = -step + ox; x < canvas.width + step; x += step) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+    for (var y = 0; y < canvas.height; y += step) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+    dots.forEach(function (d) {
+      d.y -= d.v; if (d.y < -4) d.y = canvas.height + 4;
+      ctx.fillStyle = "rgba(16,185,129," + d.a + ")";
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  if (!reduce) requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

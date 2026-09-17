@@ -9,6 +9,11 @@
   directory = "netlify/functions"
   included_files = ["config/anchors.json"]
 
+[[redirects]]
+  from = "/board"
+  to = "/balance.html"
+  status = 200
+
 # The page is a static file. Don't let a CDN sit on a stale specimen for a week.
 [[headers]]
   for = "/*"

@@ -80,6 +80,9 @@
   .led.warn i { background: var(--warn); box-shadow: 0 0 8px var(--warn); animation: none; }
   .led.dim { color: var(--faint); }
   .led.dim i { background: var(--faint); box-shadow: none; animation: none; }
+  a.led { color: var(--muted); }
+  a.led:hover { text-decoration: none; border-color: var(--fab); color: var(--text); }
+  .bar-spacer { flex: 1 1 40px; }
   @keyframes pulse { 50% { opacity: .35; } }
   .ticker { flex: 1 1 180px; overflow: hidden; white-space: nowrap;
     mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
@@ -369,7 +372,8 @@
 
 <div class="wrap">
   <div class="bar">
-    <span class="led"><i></i> Engine online</span>
+    <a class="led" href="index.html">How it works</a>
+    <span class="led"><i></i> Board</span>
     <span class="led warn"><i></i> Specimen feed</span>
     <span class="led dim"><i></i> t0 22 Mar 2023</span>
     <div class="ticker" aria-hidden="true">
