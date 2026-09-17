@@ -1,0 +1,4 @@
+node_modules/
+.env
+.netlify/
+data/last-good.json

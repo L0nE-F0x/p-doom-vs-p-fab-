@@ -1,0 +1,184 @@
+{
+  "$comment": "Rule two (see scaffold §2): both slots require who / when / source_url / quote. An indicator with an empty slot does not render — the build fails. Verbatim quotes only; never a paraphrase.",
+  "jobs.junior": {
+    "axis": "fab-doom",
+    "doom": {
+      "who": "Dario Amodei, CEO, Anthropic",
+      "when": "2025-11-16",
+      "source_url": "https://www.cbsnews.com/news/anthropic-ceo-dario-amodei-warning-of-ai-potential-dangers-60-minutes-transcript/",
+      "quote": "that is the future we could see, if we don't become aware of this problem now",
+      "number": {
+        "value": -50,
+        "unit": "percent_change",
+        "of": "entry-level white-collar roles"
+      },
+      "verified": true,
+      "verified_on": "2026-09-17",
+      "note": "Axios 28 May 2025 originated 'AI could wipe out half of all entry-level white-collar jobs — and spike unemployment to 10-20%' as attributed paraphrase, not quoted speech (opened at source). Anderson Cooper read that paraphrase back on 60 Minutes; Amodei answered 'Yes' and then this sentence. The 50% figure is his, confirmed on camera — it was never a verbatim Axios quotation."
+    },
+    "fab": {
+      "who": "Marc Andreessen",
+      "when": "2023-06-06",
+      "source_url": "https://pmarca.substack.com/p/why-ai-will-save-the-world",
+      "quote": "And that is why technology doesn't destroy jobs and never will.",
+      "number": {
+        "value": 0,
+        "unit": "percent_change",
+        "of": "net jobs",
+        "note": "Andreessen gives NO figures anywhere in the essay (confirmed at source). The 0 anchor is our reading of \"never will\" as no net destruction — ours, not his."
+      },
+      "verified": true,
+      "verified_on": "2026-09-16",
+      "anchor_is_ours": true
+    }
+  },
+  "jobs.unemp": {
+    "axis": "fab-doom",
+    "doom": {
+      "who": "Dario Amodei, CEO, Anthropic",
+      "when": "2025-05-28",
+      "source_url": "https://www.axios.com/2025/05/28/ai-jobs-white-collar-unemployment-anthropic",
+      "quote": "Cancer is cured, the economy grows at 10% a year, the budget is balanced — and 20% of people don't have jobs.",
+      "number": {
+        "value": 10,
+        "unit": "percent_level",
+        "of": "US unemployment rate",
+        "note": "Low end of the 10-20% range Amodei affirmed on 60 Minutes (16 Nov 2025) when Cooper read Axios's paraphrase back to him. The 20% also appears in this verbatim Axios quotation, as a scenario. Charitable anchor is the low end."
+      },
+      "verified": true,
+      "verified_on": "2026-09-17",
+      "note": "Opened Axios at source. The 10-20% unemployment figure in the lede is attributed paraphrase ('Amodei told us'), not quoted speech. This sentence is quoted. He later said 'Yes' to the 10-20% range on 60 Minutes: https://www.cbsnews.com/news/anthropic-ceo-dario-amodei-warning-of-ai-potential-dangers-60-minutes-transcript/"
+    },
+    "fab": {
+      "who": "Marc Andreessen",
+      "when": "2023-06-06",
+      "source_url": "https://pmarca.substack.com/p/why-ai-will-save-the-world",
+      "quote": "And that is why technology doesn't destroy jobs and never will.",
+      "number": {
+        "value": 0,
+        "unit": "percent_change",
+        "of": "unemployment rate vs t0",
+        "note": "Andreessen gives NO figures anywhere in the essay (confirmed at source). The 0 anchor is our reading of \"never will\" as no net destruction — ours, not his."
+      },
+      "verified": true,
+      "verified_on": "2026-09-16",
+      "anchor_is_ours": true
+    }
+  },
+  "growth.prod": {
+    "axis": "fab-fizzle",
+    "fizzle": {
+      "who": "Daron Acemoglu, MIT",
+      "when": "2024-05",
+      "source_url": "https://economics.mit.edu/sites/default/files/2024-10/The%20Simple%20Macroeconomics%20of%20AI.pdf",
+      "quote": "TFP effects within the next 10 years should be no more than 0.66% in total – or approximately a 0.064% increase in TFP growth annually.",
+      "number": {
+        "value": 0.064,
+        "unit": "pp_per_year",
+        "of": "TFP growth",
+        "note": "Opened the MIT PDF of Economic Policy 2024. Headline claim is 0.66% TFP over 10 years; Acemoglu's own annualisation is 0.064pp/year. The tighter easy/hard split ('less than 0.53%' over 10 years) is a further downward adjustment of the same estimate, not a second claim. We take his stated annualisation of the headline number."
+      },
+      "verified": true,
+      "verified_on": "2026-09-17"
+    },
+    "fab": {
+      "who": "Joseph Briggs and Devesh Kodnani, Goldman Sachs Research",
+      "when": "2023-03-26",
+      "source_url": "https://www.goldmansachs.com/insights/articles/generative-ai-could-raise-global-gdp-by-7-percent.html",
+      "quote": "lift productivity growth by 1.5 percentage points over a 10-year period",
+      "number": {
+        "value": 1.5,
+        "unit": "pp_per_year",
+        "of": "labour productivity growth",
+        "note": "Public GS summary of Briggs/Kodnani, 26 March 2023, 'The Potentially Large Effects of Artificial Intelligence on Economic Growth'. The note itself says 'raise annual US labor productivity growth by just under 1½pp over a 10-year period following widespread adoption' and 'around 1.5pp/year'."
+      },
+      "verified": true,
+      "verified_on": "2026-09-17"
+    }
+  },
+  "energy.retail": {
+    "axis": "fab-doom",
+    "fab": {
+      "who": "Chris Wright, US Energy Secretary",
+      "when": "2026-01",
+      "source_url": "https://www.eenews.net/articles/what-ai-data-centers-do-and-dont-do-to-electricity-prices/",
+      "quote": "Demand growth is actually the way to drive down the price.",
+      "number": {
+        "value": 0,
+        "unit": "percent_change",
+        "of": "datacenter-state premium over national average",
+        "note": "Claim has no figure; anchor set to the weakest form of it (premium does not widen) and flagged as ours, not his."
+      },
+      "anchor_is_ours": true,
+      "verified": true,
+      "verified_on": "2026-09-17"
+    },
+    "doom": {
+      "who": "Manuel Abecasis and Hongcen Wei, Goldman Sachs Research",
+      "when": "2026-02-11",
+      "source_url": "https://www.gspublishing.com/content/research/en/reports/2026/02/11/cefdda9f-3b7c-4a53-9950-dfcfa3c6bbc2.pdf",
+      "quote": "we expect consumer electricity inflation to remain around 6% in 2026-2027",
+      "number": {
+        "value": 6,
+        "unit": "percent_change",
+        "of": "consumer electricity prices 2026-2027",
+        "note": "Primary GS note 'The Macroeconomic Spillovers From AI Electricity Demand', 11 Feb 2026. They attribute the path to data-center demand (about 40% of power-demand growth) plus utility capex passed into rates. Institutional forecast, not a named decelerationist — but it is a named, dated, opposite bet to Wright on the direction of prices."
+      },
+      "verified": true,
+      "verified_on": "2026-09-17"
+    }
+  },
+  "control.incidents": {
+    "axis": "fab-doom",
+    "doom": {
+      "who": "",
+      "when": "",
+      "source_url": "",
+      "quote": "",
+      "verified": false
+    },
+    "fab": {
+      "who": "",
+      "when": "",
+      "source_url": "",
+      "quote": "",
+      "verified": false
+    }
+  },
+  "control.horizon": {
+    "axis": "fab-doom",
+    "doom": {
+      "who": "",
+      "when": "",
+      "source_url": "",
+      "quote": "",
+      "verified": false
+    },
+    "fab": {
+      "who": "",
+      "when": "",
+      "source_url": "",
+      "quote": "",
+      "verified": false
+    }
+  },
+  "delivery.science": {
+    "axis": "fab-fizzle",
+    "fab": {
+      "who": "Sam Altman, CEO, OpenAI",
+      "when": "2024-09-23",
+      "source_url": "https://ia.samaltman.com/",
+      "quote": "a defining characteristic of the Intelligence Age will be massive prosperity",
+      "note": "WEAK — not falsifiable against a trials count. Find a specific claim about AI-discovered drugs reaching clinic, or cut the indicator. Quote verified at ia.samaltman.com (blog.samaltman.com/the-intelligence-age now 404s).",
+      "verified": true,
+      "verified_on": "2026-09-17"
+    },
+    "fizzle": {
+      "who": "",
+      "when": "",
+      "source_url": "",
+      "quote": "",
+      "verified": false
+    }
+  }
+}

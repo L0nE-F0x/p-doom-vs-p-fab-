@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>p(doom) vs p(fab)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+  :root {
+    --enamel:      #DDE2DC;
+    --enamel-deep: #CBD2CA;
+    --plate:       #E7EAE5;
+    --ink:         #1F231F;
+    --ink-soft:    #5A615A;
+    --ink-faint:   #8B928A;
+    --engrave:     #A9B1A8;
+    --brass:       #9A7B3F;
+    --fab:         #A8752E;
+    --doom:        #3F5C6B;
+    --rule:        #BEC5BC;
+    --shadow:      rgba(31, 35, 31, .10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --enamel:      #1C1E1D;
+      --enamel-deep: #141615;
+      --plate:       #242725;
+      --ink:         #DFE3DD;
+      --ink-soft:    #9AA29A;
+      --ink-faint:   #6C736B;
+      --engrave:     #4A514A;
+      --brass:       #C9A961;
+      --fab:         #D9A85E;
+      --doom:        #7FA6B8;
+      --rule:        #383C38;
+      --shadow:      rgba(0, 0, 0, .40);
+    }
+  }
+  :root[data-theme="dark"] {
+    --enamel:      #1C1E1D;
+    --enamel-deep: #141615;
+    --plate:       #242725;
+    --ink:         #DFE3DD;
+    --ink-soft:    #9AA29A;
+    --ink-faint:   #6C736B;
+    --engrave:     #4A514A;
+    --brass:       #C9A961;
+    --fab:         #D9A85E;
+    --doom:        #7FA6B8;
+    --rule:        #383C38;
+    --shadow:      rgba(0, 0, 0, .40);
+  }
+
+  body {
+    background: var(--enamel);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 0 72px;
+  }
+
+  /* ── tote-board vernacular: condensed caps, letterspaced ───────────── */
+  .eyebrow {
+    font-family: "IBM Plex Sans Condensed", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  /* ── specimen banner ───────────────────────────────────────────────── */
+  .specimen {
+    display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-block: 12px;
+    margin-bottom: 40px;
+  }
+  .specimen b { font-family: "IBM Plex Sans Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; font-size: 11px; color: var(--brass); }
+  .specimen span { font-size: 12.5px; color: var(--ink-soft); }
+
+  /* ── masthead ──────────────────────────────────────────────────────── */
+  .masthead { text-align: center; }
+  h1 {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 500;
+    font-size: clamp(26px, 6.4vw, 40px);
+    letter-spacing: -.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h1 .vs { color: var(--ink-faint); font-size: .62em; padding-inline: .28em; vertical-align: .12em; }
+  h1 .d { color: var(--doom); }
+  h1 .f { color: var(--fab); }
+  .gloss {
+    max-width: 46ch; margin: 14px auto 0;
+    font-size: 14px; color: var(--ink-soft); text-wrap: balance;
+  }
+  .gloss i { font-style: italic; color: var(--ink); }
+
+  /* ── the instrument ────────────────────────────────────────────────── */
+  .instrument { margin-block: 30px 0; }
+  .instrument svg { display: block; width: 100%; height: auto; max-width: 100%; }
+  #pointer, #beam { transform-origin: 360px 208px; }
+  #pointer { transform: rotate(0deg); }
+  #beam    { transform: rotate(0deg); }
+  .settled #pointer { transform: rotate(var(--pointer-deg)); transition: transform 1700ms cubic-bezier(.16, 1.04, .32, 1); }
+  .settled #beam    { transform: rotate(var(--beam-deg));    transition: transform 1700ms cubic-bezier(.16, 1.02, .34, 1); }
+  @media (prefers-reduced-motion: reduce) {
+    .settled #pointer, .settled #beam { transition: none; }
+  }
+
+  .readout {
+    display: flex; align-items: flex-end; justify-content: center;
+    gap: clamp(18px, 7vw, 54px);
+    margin-top: 4px;
+  }
+  .readout .side { text-align: center; }
+  .readout .score {
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    font-size: clamp(44px, 13vw, 68px);
+    line-height: .92;
+    letter-spacing: -.03em;
+  }
+  .readout .d .score { color: var(--doom); }
+  .readout .f .score { color: var(--fab); }
+  .readout .who { margin-top: 8px; }
+  .caption {
+    text-align: center; margin-top: 18px;
+    font-size: 13px; color: var(--ink-soft);
+  }
+  .caption .since { display: block; margin-top: 3px; font-size: 12px; color: var(--ink-faint); }
+
+  /* ── weights ───────────────────────────────────────────────────────── */
+  .weights {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 10px; margin-block: 36px;
+    padding-block: 18px;
+    border-block: 1px solid var(--rule);
+  }
+  .weights .eyebrow { margin-right: 4px; }
+  .preset {
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-weight: 600; font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 1px solid var(--rule);
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .preset[aria-pressed="true"] { color: var(--enamel); background: var(--ink); border-color: var(--ink); }
+  .preset:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+  /* ── fizzle readout ────────────────────────────────────────────────── */
+  .fizzle {
+    background: var(--plate);
+    border-left: 2px solid var(--brass);
+    padding: 16px 18px;
+    margin-bottom: 40px;
+  }
+  .fizzle-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+  .fizzle-head .val { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 15px; color: var(--fab); font-weight: 500; }
+  .fizzle p { margin: 8px 0 0; font-size: 13.5px; color: var(--ink-soft); max-width: 62ch; }
+  .bar { height: 3px; background: var(--enamel-deep); margin-top: 12px; position: relative; }
+  .bar i { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--fab); }
+  .bar b { position: absolute; top: -8px; bottom: -8px; width: 1px; background: var(--engrave); left: 50%; }
+
+  /* ── indicator plates ──────────────────────────────────────────────── */
+  .plate { border-top: 1px solid var(--rule); padding-block: 22px; }
+  .plate-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+  .plate-head h3 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px; font-weight: 500; margin: 0; color: var(--ink);
+  }
+  .plate-head .desc { font-size: 13px; color: var(--ink-soft); flex: 1 1 200px; }
+  .reading {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px;
+    margin-top: 10px;
+    font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
+  }
+  .reading .v { font-size: 25px; font-weight: 500; letter-spacing: -.02em; }
+  /* tote-board device: a superseded reading is struck, never hidden */
+  .reading del { font-size: 14px; color: var(--ink-faint); text-decoration-thickness: 1px; }
+  .reading .asof { font-size: 11.5px; color: var(--ink-faint); letter-spacing: .04em; }
+  .lean { font-family: "IBM Plex Sans Condensed", sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px; }
+  .lean.to-fab  { color: var(--fab);  border: 1px solid var(--fab); }
+  .lean.to-doom { color: var(--doom); border: 1px solid var(--doom); }
+
+  .receipts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 16px; background: var(--rule); border: 1px solid var(--rule); }
+  .receipt { background: var(--plate); padding: 13px 14px; }
+  .receipt q { display: block; font-size: 13.5px; line-height: 1.5; quotes: "\201C" "\201D"; }
+  .receipt cite { display: block; margin-top: 8px; font-style: normal; font-size: 11.5px; color: var(--ink-faint); }
+  .receipt cite a { color: var(--ink-soft); }
+  .receipt .tag { font-family: "IBM Plex Sans Condensed", sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; display: block; margin-bottom: 7px; }
+  .receipt.f .tag { color: var(--fab); }
+  .receipt.d .tag { color: var(--doom); }
+  .anchor-note { margin-top: 10px; font-size: 11.5px; color: var(--ink-faint); }
+  .anchor-note b { color: var(--brass); font-weight: 500; }
+  @media (max-width: 560px) { .receipts { grid-template-columns: 1fr; } }
+
+  /* an indicator that failed the receipts gate ships as an unmounted plate */
+  .plate.benched { opacity: .72; }
+  .blank {
+    margin-top: 12px; padding: 18px 14px;
+    border: 1px dashed var(--engrave);
+    font-size: 12.5px; color: var(--ink-faint);
+    display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline;
+  }
+  .blank .eyebrow { color: var(--brass); }
+
+  /* ── change log ────────────────────────────────────────────────────── */
+  .log { margin-top: 44px; border-top: 2px solid var(--ink); padding-top: 18px; }
+  .log ol { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+  .log li { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13.5px; align-items: baseline; }
+  .log time { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; font-size: 11.5px; color: var(--ink-faint); min-width: 74px; }
+  .log .what { color: var(--ink-soft); flex: 1 1 260px; }
+  .log .what code { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink); }
+
+  footer { margin-top: 40px; font-size: 12px; color: var(--ink-faint); }
+  footer a { color: var(--ink-soft); }
+</style>
+
+<div class="wrap">
+
+  <div class="specimen">
+    <b>Specimen readings</b>
+    <span>Values below are illustrative, for judging the instrument. No feed is wired yet.</span>
+  </div>
+
+  <header class="masthead">
+    <h1><span class="d">p(doom)</span><span class="vs">vs</span><span class="f">p(fab)</span></h1>
+    <p class="gloss">
+      <i>p(fab)</i> — the probability that it goes fabulously right.
+      Named for the fabs, because that is what the other side is building.
+    </p>
+  </header>
+
+  <div class="instrument">
+    <svg viewBox="0 0 720 268" role="img" aria-label="A beam balance reading 43 toward doom, 57 toward fab.">
+      <!-- engraved graduation arc; the pointer is geared steeper than the beam,
+           the way a real balance amplifies a small deflection -->
+      <g id="ticks" fill="none" stroke="var(--engrave)" stroke-width="1"></g>
+      <g id="tickLabels" fill="var(--ink-faint)" font-family="IBM Plex Mono, monospace" font-size="10" text-anchor="middle"></g>
+
+      <!-- pillar -->
+      <path d="M352 208 L368 208 L364 252 L356 252 Z" fill="var(--engrave)"></path>
+      <rect x="326" y="250" width="68" height="5" fill="var(--ink-soft)"></rect>
+
+      <g id="beam">
+        <rect x="128" y="205" width="464" height="6" rx="1" fill="var(--brass)"></rect>
+        <!-- pans -->
+        <path d="M128 211 L112 238 L144 238 Z" fill="none" stroke="var(--doom)" stroke-width="1.5"></path>
+        <path d="M592 211 L576 238 L608 238 Z" fill="none" stroke="var(--fab)" stroke-width="1.5"></path>
+      </g>
+
+      <g id="pointer">
+        <line x1="360" y1="208" x2="360" y2="74" stroke="var(--ink)" stroke-width="1.5"></line>
+        <path d="M360 68 L355 82 L365 82 Z" fill="var(--ink)"></path>
+      </g>
+
+      <circle cx="360" cy="208" r="6.5" fill="var(--enamel)" stroke="var(--ink)" stroke-width="1.5"></circle>
+    </svg>
+  </div>
+
+  <div class="readout">
+    <div class="side d">
+      <div class="score num" id="scoreDoom">43</div>
+      <div class="eyebrow who">p(doom)</div>
+    </div>
+    <div class="side f">
+      <div class="score num" id="scoreFab">57</div>
+      <div class="eyebrow who">p(fab)</div>
+    </div>
+  </div>
+
+  <p class="caption">
+    Who’s winning so far.
+    <span class="since">Scored on change since <span class="num">22 March 2023</span> — the week both camps put claims on the record. Not a probability.</span>
+  </p>
+
+  <div class="weights">
+    <span class="eyebrow">Re-run it with your weights</span>
+    <button class="preset" type="button" aria-pressed="false" data-preset="doomer">Doomer</button>
+    <button class="preset" type="button" aria-pressed="true" data-preset="even">Even</button>
+    <button class="preset" type="button" aria-pressed="false" data-preset="accel">Accelerationist</button>
+  </div>
+
+  <section class="fizzle">
+    <div class="fizzle-head">
+      <span class="eyebrow">Separate readout — the fizzle track</span>
+      <span class="val">−86 · toward fab</span>
+    </div>
+    <p>
+      Did it work at all? A fizzle refutes p(fab); it does not confirm p(doom), so it never
+      touches the balance above. On this track the accelerationists are well ahead:
+      productivity growth is running near Goldman’s number, not Acemoglu’s.
+    </p>
+    <div class="bar"><b></b><i style="left: 7%"></i></div>
+  </section>
+
+  <h2 class="eyebrow" style="margin-bottom: 4px;">The board</h2>
+
+  <article class="plate">
+    <div class="plate-head">
+      <h3>jobs.unemp</h3>
+      <span class="desc">US unemployment rate</span>
+    </div>
+    <div class="reading">
+      <span class="v">4.4</span>
+      <del>4.3</del>
+      <span class="lean to-fab">−72 toward fab</span>
+      <span class="asof">AS OF 2026-08 · REVISED 2026-09-05</span>
+    </div>
+    <div class="receipts">
+      <div class="receipt f">
+        <span class="tag">p(fab)</span>
+        <q>And that is why technology doesn’t destroy jobs and never will.</q>
+        <cite>Marc Andreessen, 6 June 2023 — <a href="https://pmarca.substack.com/p/why-ai-will-save-the-world">Why AI Will Save the World</a></cite>
+      </div>
+      <div class="receipt d">
+        <span class="tag">p(doom)</span>
+        <q>Cancer is cured, the economy grows at 10% a year, the budget is balanced — and 20% of people don’t have jobs.</q>
+        <cite>Dario Amodei, 28 May 2025 — <a href="https://www.axios.com/2025/05/28/ai-jobs-white-collar-unemployment-anthropic">Axios</a></cite>
+      </div>
+    </div>
+    <p class="anchor-note">
+      Anchors <b>3.5 → 10.0</b>. The doom anchor is Amodei’s own low end. The fab anchor is
+      <b>ours</b> — Andreessen gives no figure anywhere in the essay, so we read “never will”
+      as no deterioration from the rate at t0.
+    </p>
+  </article>
+
+  <article class="plate">
+    <div class="plate-head">
+      <h3>jobs.junior</h3>
+      <span class="desc">Entry-level postings in AI-exposed occupations, vs t0</span>
+    </div>
+    <div class="reading">
+      <span class="v">−22.4%</span>
+      <span class="lean to-fab">−12 toward fab</span>
+      <span class="asof">AS OF 2026-08</span>
+    </div>
+    <div class="receipts">
+      <div class="receipt f">
+        <span class="tag">p(fab)</span>
+        <q>And that is why technology doesn’t destroy jobs and never will.</q>
+        <cite>Marc Andreessen, 6 June 2023 — <a href="https://pmarca.substack.com/p/why-ai-will-save-the-world">Why AI Will Save the World</a></cite>
+      </div>
+      <div class="receipt d">
+        <span class="tag">p(doom)</span>
+        <q>that is the future we could see, if we don’t become aware of this problem now</q>
+        <cite>Dario Amodei, 16 Nov 2025 — <a href="https://www.cbsnews.com/news/anthropic-ceo-dario-amodei-warning-of-ai-potential-dangers-60-minutes-transcript/">60 Minutes</a>, affirming the 50% figure Axios had paraphrased</cite>
+      </div>
+    </div>
+    <p class="anchor-note">Anchors <b>0% → −50%</b>, both taken straight from the quotes.</p>
+  </article>
+
+  <article class="plate">
+    <div class="plate-head">
+      <h3>energy.retail</h3>
+      <span class="desc">Datacenter-state retail price premium over the national average</span>
+    </div>
+    <div class="reading">
+      <span class="v">+3.4%</span>
+      <span class="lean to-doom">+13 toward doom</span>
+      <span class="asof">AS OF 2026-07 · STALE, NOT COUNTED</span>
+    </div>
+    <div class="receipts">
+      <div class="receipt f">
+        <span class="tag">p(fab)</span>
+        <q>Demand growth is actually the way to drive down the price.</q>
+        <cite>Chris Wright, US Energy Secretary, January 2026 — <a href="https://www.eenews.net/articles/what-ai-data-centers-do-and-dont-do-to-electricity-prices/">E&amp;E News</a></cite>
+      </div>
+      <div class="receipt d">
+        <span class="tag">p(doom)</span>
+        <q>we expect consumer electricity inflation to remain around 6% in 2026-2027</q>
+        <cite>Manuel Abecasis and Hongcen Wei, Goldman Sachs Research, 11 Feb 2026 — <a href="https://www.gspublishing.com/content/research/en/reports/2026/02/11/cefdda9f-3b7c-4a53-9950-dfcfa3c6bbc2.pdf">US Economics Analyst</a></cite>
+      </div>
+    </div>
+    <p class="anchor-note">
+      Anchors <b>0 → 6</b>. The fab anchor is <b>ours</b> — Wright gives no figure. The doom 6 is Goldman’s national
+      electricity-inflation forecast, not a premium; the board still plots the datacenter-state premium.
+    </p>
+  </article>
+
+  <article class="plate benched">
+    <div class="plate-head">
+      <h3>control.horizon</h3>
+      <span class="desc">Autonomous task horizon · hand-curated from METR</span>
+    </div>
+    <div class="blank">
+      <span class="eyebrow">Unmounted</span>
+      <span>No receipts on either side. An indicator with an empty claim slot does not render — the build fails first.</span>
+    </div>
+  </article>
+
+  <article class="plate benched">
+    <div class="plate-head">
+      <h3>control.incidents</h3>
+      <span class="desc">Logged AI incidents, 90-day rolling</span>
+    </div>
+    <div class="blank">
+      <span class="eyebrow">Unmounted</span>
+      <span>No receipts, and no denominator — a growing database is not a more dangerous world.</span>
+    </div>
+  </article>
+
+  <section class="log">
+    <h2 class="eyebrow">What moved</h2>
+    <ol>
+      <li><time datetime="2026-09-05">05 SEP</time><span class="what"><code>jobs.unemp</code> revised 4.3 → 4.4 by BLS. Score moved 3 toward doom. Prior reading struck, not replaced.</span></li>
+      <li><time datetime="2026-09-02">02 SEP</time><span class="what"><code>energy.retail</code> went stale at 60 days and dropped out of the tilt. Last reading held on the board, greyed.</span></li>
+      <li><time datetime="2026-08-28">28 AUG</time><span class="what"><code>growth.prod</code> Q2 productivity revised up. Fizzle track moved 9 toward fab.</span></li>
+      <li><time datetime="2026-08-14">14 AUG</time><span class="what"><code>delivery.cost</code> removed from the board — both camps predicted it falls, so it fails the opposition rule. Listed in rejected indicators with the reason.</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    Anchors are frozen before an indicator ships and changed only by pull request —
+    <a href="#">see the file’s history</a>.
+    Rejected indicators and the full method are published alongside.
+    Nothing here ticks: most of this data is monthly, and some of it is quarterly.
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var FULL_SCALE = 45;   // degrees of pointer travel at |tilt| = 100
+    var BEAM_GEAR  = 0.22; // the beam deflects a fraction of what the pointer shows
+
+    // Specimen: jobs category −42, energy category +13.3 → tilt −14.35
+    var tilt = -14.35;
+
+    var svgNS = "http://www.w3.org/2000/svg";
+    var ticks = document.getElementById("ticks");
+    var labels = document.getElementById("tickLabels");
+    var cx = 360, cy = 208, r = 152;
+
+    for (var v = -100; v <= 100; v += 12.5) {
+      var major = Math.abs(v % 50) < 0.01;
+      var a = (v / 100) * FULL_SCALE * Math.PI / 180;
+      var sin = Math.sin(a), cos = Math.cos(a);
+      var len = major ? 13 : 7;
+      var line = document.createElementNS(svgNS, "line");
+      line.setAttribute("x1", (cx + sin * r).toFixed(1));
+      line.setAttribute("y1", (cy - cos * r).toFixed(1));
+      line.setAttribute("x2", (cx + sin * (r + len)).toFixed(1));
+      line.setAttribute("y2", (cy - cos * (r + len)).toFixed(1));
+      if (major) line.setAttribute("stroke-width", "1.75");
+      ticks.appendChild(line);
+
+      if (major) {
+        var t = document.createElementNS(svgNS, "text");
+        var lr = r + len + 13;
+        t.setAttribute("x", (cx + sin * lr).toFixed(1));
+        t.setAttribute("y", (cy - cos * lr + 3.5).toFixed(1));
+        t.textContent = v === 0 ? "0" : String(Math.abs(v));
+        if (v !== 0) t.setAttribute("fill", v < 0 ? "var(--fab)" : "var(--doom)");
+        labels.appendChild(t);
+      }
+    }
+
+    function settle(t) {
+      document.documentElement.style.setProperty("--pointer-deg", (t / 100 * FULL_SCALE).toFixed(2) + "deg");
+      document.documentElement.style.setProperty("--beam-deg", (t / 100 * FULL_SCALE * BEAM_GEAR).toFixed(2) + "deg");
+      var doom = Math.round((t + 100) / 2);
+      document.getElementById("scoreDoom").textContent = doom;
+      document.getElementById("scoreFab").textContent = 100 - doom;
+    }
+
+    settle(tilt);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { document.body.classList.add("settled"); });
+    });
+
+    // Presets re-run the argument; the balance settles again rather than jumping.
+    var PRESETS = { doomer: 22.6, even: -14.35, accel: -41.2 };
+    document.querySelectorAll(".preset").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".preset").forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+        settle(PRESETS[btn.dataset.preset]);
+      });
+    });
+  })();
+</script>
+</html>

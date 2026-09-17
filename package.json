@@ -1,0 +1,12 @@
+{
+  "name": "pdoom-vs-pfab",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "gate": "node scripts/check-claims.mjs",
+    "build": "npm run gate && npm test",
+    "fetch": "node scripts/dev-fetch.mjs"
+  }
+}

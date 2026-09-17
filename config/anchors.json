@@ -1,0 +1,30 @@
+{
+  "$comment": "FROZEN. Changes land by PR with a stated reason, never from an admin UI. Every history row records the anchor_version it was scored under, so re-anchoring never rewrites the past. Where a claim in data/claims.json contains a number, that number IS the anchor — see scaffold §7.",
+  "t0": "2023-03-22",
+  "anchors": {
+    "jobs.junior": {
+      "version": 1, "since": "2026-09-16",
+      "measure": "percent change in entry-level postings in AI-exposed occupations, vs t0",
+      "fab": 0, "doom": -50,
+      "provenance": "both from claims.json numbers (Andreessen 0 / Amodei -50, the latter affirmed on 60 Minutes 2025-11-16)"
+    },
+    "jobs.unemp": {
+      "version": 1, "since": "2026-09-16",
+      "measure": "US unemployment rate, level",
+      "fab": 3.5, "doom": 10,
+      "provenance": "doom = Amodei low end of 10-20%, affirmed on 60 Minutes. fab = BLS national unemployment rate for March 2023 (Employment Situation, released 2023-04-07, https://www.bls.gov/news.release/archives/empsit_04072023.htm) — the monthly reading covering t0. Frozen at 3.5."
+    },
+    "growth.prod": {
+      "version": 2, "since": "2026-09-17",
+      "measure": "5-year annualised nonfarm business labour productivity growth, pp",
+      "fab": 1.5, "fizzle": 0.064,
+      "provenance": "Goldman 1.5pp/year labour productivity (Briggs/Kodnani 26 Mar 2023). Acemoglu 0.66% TFP over 10 years, annualised by him as 0.064pp/year (Economic Policy 2024 PDF, opened 2026-09-17). v1 used 0.066 from 0.66/10; v2 uses his stated annualisation. Units are not identical (labour productivity vs TFP) — that mismatch is in the claims, not ours to paper over."
+    },
+    "energy.retail": {
+      "version": 1, "since": "2026-09-16",
+      "measure": "percent change in datacenter-state retail price premium over national average, vs t0",
+      "fab": 0, "doom": 6,
+      "provenance": "fab anchor is OURS — Wright's claim carries no figure; set to the weakest form of it. doom = Goldman (Abecasis/Wei, 11 Feb 2026) 'consumer electricity inflation to remain around 6% in 2026-2027'. The 6 is their national inflation figure, not a premium; the board measure is the premium. Flagged."
+    }
+  }
+}
